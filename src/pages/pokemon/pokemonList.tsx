@@ -1,39 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+// import { useGetPokemonList } from '../../hooks';
+
+const getPokemonList = async (limit: number, offset: number) => {
+  const response = await fetch(
+    `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
+  );
+  const data = await response.json();
+  return data.results || [];
+};
 
 const PokemonList = () => {
-  const [pokemonList, setPokemonList] = useState<
-    { name: string; url: string }[]
-  >([]);
+  const [limit, setLimit] = useState(2);
+  const [offset, setOffset] = useState(0);
 
-  const [isError, setIsError] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  function getPokemonList() {
-    setIsError(false);
-    setIsLoading(true);
-
-    fetch('https://pokeapi.co/api/v2/pokemon')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setPokemonList(data?.results || []);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsError(true);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
-
-  useEffect(() => {
-    getPokemonList();
-  }, []);
+  const {
+    data: pokemonList,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ['pokemonList', limit, offset],
+    queryFn: () => getPokemonList(limit, offset),
+  });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div style={{ textAlign: 'center' }}>Loading...</div>;
   }
 
   if (isError) {
@@ -54,6 +45,15 @@ const PokemonList = () => {
           {pokemon.name}
         </a>
       ))}
+      <button
+        onClick={() => setOffset((prev) => prev + limit)}
+        disabled={offset + limit >= 1000}
+      >
+        Next
+      </button>
+      <button onClick={() => setOffset(offset - limit)} disabled={offset === 0}>
+        Previous
+      </button>
     </div>
   );
 };

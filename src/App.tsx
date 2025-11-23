@@ -2,8 +2,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
 import Login from './pages/login';
 import Dashboard from './pages/dashboard';
-import PokemonList from './pages/pokemon/pokemonList';
-import PokemonDetail from './pages/pokemon/pokemon';
+// import PokemonList from './pages/pokemon/pokemonList';
+// import PokemonDetail from './pages/pokemon/pokemon';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Todo from './pages/todo';
+
+import { Provider as ReduxProvider } from 'react-redux';
+import store from './store';
 
 const router = createBrowserRouter([
   {
@@ -15,19 +20,31 @@ const router = createBrowserRouter([
     Component: Dashboard,
     children: [
       {
-        path: '/pokemon',
-        Component: PokemonList,
+        path: '/todo',
+        Component: Todo,
       },
-      {
-        path: '/pokemon/:id',
-        Component: PokemonDetail,
-      },
+      // {
+      //   path: '/pokemon',
+      //   Component: PokemonList,
+      // },
+      // {
+      //   path: '/pokemon/:id',
+      //   Component: PokemonDetail,
+      // },
     ],
   },
 ]);
 
+const queryClient = new QueryClient();
+
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ReduxProvider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />;
+      </QueryClientProvider>
+    </ReduxProvider>
+  );
 }
 
 export default App;
