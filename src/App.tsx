@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Todo from './pages/todo';
 
 import { Provider as ReduxProvider } from 'react-redux';
-import store from './store';
+import store from './store/store';
 
 const router = createBrowserRouter([
   {

@@ -1,24 +1,25 @@
 import { useState } from 'react';
-import { TodoContext } from './TodoContext';
-import { useContext } from 'react';
+import { addTodo } from '../../store/slices/todoSlice';
+import { useDispatch } from 'react-redux';
 
 const AddTodo = () => {
   const [todo, setTodo] = useState('');
-
-  const { addTodoToList } = useContext(TodoContext);
+  const dispatch = useDispatch();
 
   const handleAddTodo = () => {
     if (todo.trim() === '') {
       return;
     }
 
-    addTodoToList({
-      _id: crypto.randomUUID(),
-      todo,
-      completed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
+    dispatch(
+      addTodo({
+        _id: crypto.randomUUID(),
+        todo,
+        completed: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+    );
 
     setTodo('');
   };

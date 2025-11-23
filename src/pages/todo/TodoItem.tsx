@@ -1,11 +1,16 @@
-import { useContext } from 'react';
-import { TodoContext } from './TodoContext';
+import { useDispatch } from 'react-redux';
+import { toggleComplete } from '../../store/slices/todoSlice';
 
 const TodoItem = ({ todo }) => {
-  const { toggleComplete } = useContext(TodoContext);
+  const dispatch = useDispatch();
 
   const handleToggleComplete = () => {
-    toggleComplete(todo._id, !todo.completed);
+    dispatch(
+      toggleComplete({
+        _id: todo._id,
+        completed: !todo.completed,
+      })
+    );
   };
 
   return (
