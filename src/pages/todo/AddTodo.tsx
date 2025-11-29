@@ -10,17 +10,7 @@ const AddTodo = () => {
     if (todo.trim() === '') {
       return;
     }
-
-    dispatch(
-      addTodo({
-        _id: crypto.randomUUID(),
-        todo,
-        completed: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      })
-    );
-
+    dispatch(addTodo(todo));
     setTodo('');
   };
 

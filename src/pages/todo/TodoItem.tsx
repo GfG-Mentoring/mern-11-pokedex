@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { toggleComplete } from '../../store/slices/todoSlice';
 
-const TodoItem = ({ todo }) => {
+const TodoItem = ({ todo }: { todo: any }) => {
   const dispatch = useDispatch();
 
   const handleToggleComplete = () => {

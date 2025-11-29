@@ -1,40 +1,36 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { addTodoApi, getTodosApi } from '../apis/todoApis';
+
+export const fetchTodos = createAsyncThunk<any, void>(
+  'todo/fetchTodos',
+  async () => {
+    const response = await getTodosApi(5, 0);
+    return response.data.data ?? [];
+  }
+);
+
+export const addTodo = createAsyncThunk<any, string>(
+  'todo/addTodo',
+  async (todo: string) => {
+    const response = await addTodoApi(todo);
+    console.log(response);
+    return response.data.data;
+  }
+);
 
 const todoInitialState = {
-  todos: [
-    {
-      _id: '69197f5132b4f3e93e04267c',
-      todo: 'complete assignment',
-      completed: false,
-      createdBy: {
-        $oid: '69197b29b8ea16570c32b627',
-      },
-      createdAt: '2025-11-16T07:37:53.731Z',
-
-      updatedAt: '2025-11-16T07:37:53.731Z',
-    },
-    {
-      _id: '69197f5132b4f3e93e04267d',
-      todo: 'learn tennis',
-      completed: false,
-      createdBy: {
-        $oid: '69197b29b8ea16570c32b627',
-      },
-      createdAt: '2025-11-16T07:37:53.731Z',
-      updatedAt: '2025-11-16T07:37:53.731Z',
-    },
-  ],
+  todos: [] as any[],
   isLoading: false,
-  error: null,
+  error: '',
 };
 
 const todoSlice = createSlice({
   name: 'todo',
   initialState: todoInitialState,
   reducers: {
-    addTodo: (state, action) => {
-      state.todos.push(action.payload);
-    },
+    // addTodo: (state, action) => {
+    //   state.todos.push(action.payload);
+    // },
     toggleComplete: (state, action) => {
       state.todos = state.todos.map((todo) =>
         todo._id === action.payload._id
@@ -43,8 +39,39 @@ const todoSlice = createSlice({
       );
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        const newTodos = action.payload.filter((todo) => {
+          return !state.todos.some((t: any) => t._id === todo._id);
+        });
+        console.log(newTodos);
+        state.todos = [...state.todos, ...newTodos];
+        state.isLoading = false;
+      })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.error = 'Error fetching todos';
+        state.isLoading = false;
+      })
+      .addCase(fetchTodos.pending, (state, action) => {
+        state.isLoading = true;
+        state.error = '';
+      })
+      .addCase(addTodo.fulfilled, (state, action) => {
+        state.todos = [...state.todos, action.payload];
+        state.isLoading = false;
+      })
+      .addCase(addTodo.rejected, (state, action) => {
+        state.error = 'Error adding todo';
+        state.isLoading = false;
+      })
+      .addCase(addTodo.pending, (state, action) => {
+        state.isLoading = true;
+        state.error = '';
+      });
+  },
 });
 
 export const todoReducer = todoSlice.reducer;
 
-export const { addTodo, toggleComplete } = todoSlice.actions;
+export const { toggleComplete } = todoSlice.actions;

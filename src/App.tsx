@@ -9,11 +9,17 @@ import Todo from './pages/todo';
 
 import { Provider as ReduxProvider } from 'react-redux';
 import store from './store/store';
+import Signin from './pages/auth/signin';
+import Signup from './pages/auth/signup';
 
 const router = createBrowserRouter([
   {
-    path: '/login',
-    Component: Login,
+    path: '/signin',
+    Component: Signin,
+  },
+  {
+    path: '/signup',
+    Component: Signup,
   },
   {
     path: '/',
@@ -41,7 +47,7 @@ function App() {
   return (
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />;
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </ReduxProvider>
   );
